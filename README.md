@@ -46,9 +46,15 @@
 
 ### Key Features <a name="key-features"></a>
 
-- **[Add new students or teachers]**
-- **[Add new books]**
-- **[Save records of who borrowed a given book and when]**
+- **[List all books]**
+- **[List of games]**
+- **[List all music albums]**
+- **[List all labels (e.g. 'Gift', 'New')]**
+- **[List all authors (e.g. 'Stephen King')]**
+- **[List all sources (e.g. 'From a friend', 'Online shop')]**
+- **[Add a book]**
+- **[Add a music album]**
+- **[Add a game]**
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
