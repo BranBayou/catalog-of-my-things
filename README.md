@@ -1,36 +1,37 @@
-# OOP school library
+# Catalog of my things
 
 <a name="readme-top"></a>
 
-# ￼ Table of Contents
+# Table of Contents
 
-- [￼ About the Project](#about-project)
-  - [￼ Built With](#built-with)
+- [About the Project](#about-project)
+  - [Built With](#built-with)
     - [Tech Stack](#tech-stack)
     - [Key Features](#key-features)
-- [￼ Getting Started](#getting-started)
+- [Getting Started](#getting-started)
   - [Setup](#setup)
   - [Prerequisites](#prerequisites)
   - [Install](#install)
   - [Usage](#usage)
   - [Run tests](#run-tests)
   - [Deployment](#triangular_flag_on_post-deployment)
-- [￼ Authors](#authors)
-- [￼ Future Features](#future-features)
-- [￼ Contributing](#contributing)
-- [￼ Show your support](#support)
-- [￼ Acknowledgements](#acknowledgements)
-- [￼ FAQ](#faq)
-- [￼ License](#license)
+- [Authors](#authors)
+- [Future Features](#future-features)
+- [Contributing](#contributing)
+- [Show your support](#support)
+- [Acknowledgements](#acknowledgements)
+- [FAQ](#faq)
+- [License](#license)
 
 <!-- PROJECT DESCRIPTION -->
 
-# ￼ [OOP school library] <a name="about-project"></a>
+# [Catalog of my things] <a name="about-project"></a>
 
-**[OOP school library]** is like librarian of OOP for a University, and it is a tool to record what books are in the library and who borrows them. The app that I will create will allow you to:
-  
+**[Catalog of my things]** "Catalog of my things" is a simple console app that allows users to manage collections of the things they own. It has been developed based on the following UML class diagram.
 
-## ￼ Built With <a name="built-with"></a>
+![Class diagram image](https://github.com/BranBayou/catalog-of-my-things/blob/set-up-kanban-board/Assets/catalog_of_my_things.png)
+
+## Built With <a name="built-with"></a>
 
 ### Tech Stack <a name="tech-stack"></a>
 
@@ -45,15 +46,21 @@
 
 ### Key Features <a name="key-features"></a>
 
-- **[Add new students or teachers]**
-- **[Add new books]**
-- **[Save records of who borrowed a given book and when]**
+- **[List all books]**
+- **[List of games]**
+- **[List all music albums]**
+- **[List all labels (e.g. 'Gift', 'New')]**
+- **[List all authors (e.g. 'Stephen King')]**
+- **[List all sources (e.g. 'From a friend', 'Online shop')]**
+- **[Add a book]**
+- **[Add a music album]**
+- **[Add a game]**
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
 
-## ￼ Getting Started <a name="getting-started"></a>
+## Getting Started <a name="getting-started"></a>
 
 To get a local copy up and running, follow these steps.
 
@@ -67,15 +74,15 @@ In order to run this project you need:
 
 Clone this repository to your desired folder:
 
-- cd `oop-class-library`
-- `git clone git@github.com:BranBayou/oop-class-library.git`
+- cd `catalog-of-my-things`
+- `git clone ggit@github.com:BranBayou/catalog-of-my-things.git`
 
 
 ### Install
 
 Install this project with:
 
-- cd oop-class-library
+- cd catalog-of-my-things
 - bundle install
 
 ### Usage
@@ -89,6 +96,7 @@ To run the project execute the following command:
 To run tests, run the following command:
 
 - `rubocop`
+- `rspec .`
 
 
 ### Deployment
@@ -101,7 +109,7 @@ You can deploy this project using:
 
 <!-- AUTHORS -->
 
-## ￼ Authors <a name="authors"></a>
+## Authors <a name="authors"></a>
 
 ￼👤 **Berhanu Baye**
 - GitHub: [@BranBayou](https://github.com/BranBayou)
@@ -118,7 +126,7 @@ You can deploy this project using:
 
 <!-- FUTURE FEATURES -->
 
-## ￼ Future Features <a name="future-features"></a>
+## Future Features <a name="future-features"></a>
 
 - [ ] **[Decode different codes]**
 
@@ -126,17 +134,17 @@ You can deploy this project using:
 
 <!-- CONTRIBUTING -->
 
-## ￼ Contributing <a name="contributing"></a>
+## Contributing <a name="contributing"></a>
 
 Contributions, issues, and feature requests are welcome!
 
-Feel free to check the [issues page](https://github.com/BranBayou/oop-class-library/issues).
+Feel free to check the [issues page](hhttps://github.com/BranBayou/catalog-of-my-things/issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- SUPPORT -->
 
-## ￼ Show your support <a name="support"></a>
+## Show your support <a name="support"></a>
 
 If you like this project please show support by staring ￼.
 
@@ -144,7 +152,7 @@ If you like this project please show support by staring ￼.
 
 <!-- ACKNOWLEDGEMENTS -->
 
-## ￼ Acknowledgments <a name="acknowledgements"></a>
+## Acknowledgments <a name="acknowledgements"></a>
 
 * We would like to thank our Microverse team and our coding partners for their support and guidance.
 
@@ -152,7 +160,7 @@ If you like this project please show support by staring ￼.
 
 <!-- LICENSE -->
 
-## ￼ License <a name="license"></a>
+## License <a name="license"></a>
 
 This project is [MIT](./LICENSE) licensed.
 
