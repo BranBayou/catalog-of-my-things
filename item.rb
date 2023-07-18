@@ -1,15 +1,16 @@
+require 'date'
+
 class Item
   attr_accessor :name, :published_date, :archived
+  attr_reader :id
 
   def initialize(name, published_date)
-    @name = name
+    @id = rand(1000..9999)
     @published_date = published_date
     @archived = false
-  end
-
-  def can_be_archived?
-    today = Date.today
-    published_date < (today - (10 * 365))
+    @label = nil
+    @genre = nil
+    @author = nil
   end
 
   def move_to_archive
@@ -19,5 +20,12 @@ class Item
     else
       puts "#{name} cannot be archived."
     end
+  end
+
+  private
+
+  def can_be_archived?
+    today = Date.today
+    published_date < (today - (10 * 365))
   end
 end
