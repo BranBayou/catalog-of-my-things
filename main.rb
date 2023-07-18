@@ -2,16 +2,21 @@ require 'json'
 require 'date'
 require_relative 'book'
 require_relative 'label'
+require_relative 'game'
+require_relative 'item'
 
 BOOKS_FILE = 'books.json'.freeze
 LABELS_FILE = 'labels.json'.freeze
+GAMES_FILE = 'games.json'.freeze
 
 def display_options
   puts 'Options:'
   puts '1. List all books'
   puts '2. List all labels'
-  puts '3. Add a book'
-  puts '4. Quit'
+  puts '3. List all games'
+  puts '4. Add a book'
+  puts '5. Add a game'
+  puts '6. Quit'
 end
 
 def load_books
@@ -31,7 +36,7 @@ def load_books
 end
 
 def save_books(books)
-  File.write(BOOKS_FILE, books.map(&:to_json).to_json)
+  File.write(BOOKS_FILE, JSON.pretty_generate(books.map(&:to_json)))
 end
 
 def load_labels
@@ -51,7 +56,27 @@ def load_labels
 end
 
 def save_labels(labels)
-  File.write(LABELS_FILE, labels.map(&:to_json).to_json)
+  File.write(LABELS_FILE, JSON.pretty_generate(labels.map(&:to_json)))
+end
+
+def load_games
+  return [] unless File.exist?(GAMES_FILE)
+
+  File.open(GAMES_FILE, 'r') do |file|
+    json_data = file.read
+    return [] if json_data.empty?
+
+    begin
+      JSON.parse(json_data).map { |game_json| Game.from_json(game_json) }
+    rescue JSON::ParserError
+      puts 'Error: Unable to parse JSON data in games.json. Creating a new empty list of games.'
+      []
+    end
+  end
+end
+
+def save_games(games)
+  File.write(GAMES_FILE, JSON.pretty_generate(games.map(&:to_json)))
 end
 
 def list_books(books)
@@ -90,6 +115,21 @@ def list_labels(labels)
   end
 end
 
+def list_games(games)
+  puts 'Games:'
+  if games.empty?
+    puts 'No games found.'
+  else
+    games.each do |game|
+      puts "Title: #{game.name}"
+      puts "Published Date: #{game.published_date}"
+      puts "Last Played Date: #{game.last_played_at}"
+      puts "Archived: #{game.archived}"
+      puts '---'
+    end
+  end
+end
+
 def add_book(books)
   print 'Enter the title of the book: '
   title = gets.chomp
@@ -105,8 +145,22 @@ def add_book(books)
   puts "Book '#{book.name}' added."
 end
 
+def add_game(games)
+  print 'Enter the title of the game: '
+  title = gets.chomp
+  print 'Enter the published date of the game (YYYY-MM-DD): '
+  published_date = gets.chomp
+  print 'Enter the last played date of the game (YYYY-MM-DD): '
+  last_played_date = gets.chomp
+
+  game = Game.new(title, Date.parse(published_date), last_played_date)
+  games << game
+  puts "Game '#{game.name}' added."
+end
+
 books = load_books || []
 labels = load_labels || []
+games = load_games || []
 
 loop do
   display_options
@@ -119,10 +173,15 @@ loop do
   when 2
     list_labels(labels)
   when 3
-    add_book(books)
+    list_games(games)
   when 4
+    add_book(books)
+  when 5
+    add_game(games)
+  when 6
     save_books(books)
     save_labels(labels)
+    save_games(games)
     puts 'Quitting the app...'
     break
   else
