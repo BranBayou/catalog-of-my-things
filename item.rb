@@ -1,3 +1,5 @@
+require 'json'
+
 class Item
   attr_accessor :name, :published_date, :archived
 
@@ -9,7 +11,7 @@ class Item
 
   def can_be_archived?
     today = Date.today
-    published_date < (today - (10 * 365))
+    published_date < (today - (10 * 365)) # Checking if the published_date is older than 10 years
   end
 
   def move_to_archive
@@ -18,6 +20,21 @@ class Item
       puts "#{name} has been archived."
     else
       puts "#{name} cannot be archived."
+    end
+  end
+
+  def to_json(*_args)
+    {
+      name: name,
+      published_date: published_date.to_s,
+      archived: archived
+    }.to_json
+  end
+
+  def self.from_json(json)
+    data = JSON.parse(json)
+    new(data['name'], Date.parse(data['published_date'])).tap do |item|
+      item.archived = data['archived']
     end
   end
 end
