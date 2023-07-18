@@ -6,9 +6,6 @@ require_relative 'label'
 BOOKS_FILE = 'books.json'.freeze
 LABELS_FILE = 'labels.json'.freeze
 
-File.write(BOOKS_FILE, '[]') unless File.exist?(BOOKS_FILE)
-File.write(LABELS_FILE, '[]') unless File.exist?(LABELS_FILE)
-
 def display_options
   puts 'Options:'
   puts '1. List all books'
