@@ -26,21 +26,21 @@ loop do
   when 1
     app.list_books
   when 2
-    app.getmusicalbum
+    app.list_music_album
   when 3
     app.list_games
   when 4
-    app.getgenre
+    app.list_genre
   when 5
     app.list_labels
   when 6
-    list_all_authors
+    app.list_authors
   when 7
     list_all_sources
   when 8
     app.add_book
   when 9
-    app.addmusicalbum
+    app.add_music_album
   when 10
     app.add_game
   when 11
