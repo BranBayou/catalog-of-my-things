@@ -1,33 +1,22 @@
 require_relative 'item'
 
 class Label
-  attr_accessor :name, :items
+  attr_accessor :id, :name, :color, :items
 
-  def initialize(name)
+  def initialize(id, name, color)
+    @id = id
     @name = name
+    @color = color
     @items = []
   end
 
   def add_item(item)
+    @items << item
     item.label = self
-    items << item
   end
 
-  def to_json(*_args)
-    {
-      name: name,
-      items: items.map(&:to_json)
-    }.to_json
-  end
-
-  def self.from_json(json)
-    data = JSON.parse(json)
-    label = new(data['name'])
-    data['items'].each do |item_json|
-      item = Item.from_json(item_json)
-      item.label = label
-      label.items << item
-    end
-    label
+  def remove_item(item)
+    @items.delete(item)
+    item.label = nil
   end
 end

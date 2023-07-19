@@ -1,243 +1,219 @@
 require 'json'
 require 'date'
-require_relative 'book'
-require_relative 'label'
-require_relative 'game'
 require_relative 'item'
+require_relative 'book'
+require_relative 'game'
 require_relative 'music'
 require_relative 'genre'
+require_relative 'label'
+
 
 class App
-  attr_reader :books, :labels, :games, :musics
+  FILE_PATH = "#{__dir__}/json/books.json".freeze
 
-  def initialize
+  attr_accessor :books
+
+  def initialize(file: FILE_PATH)
+    @file = file
     @books = load_books || []
-    @labels = load_labels || []
-    @games = load_games || []
-    @musics = load_music_album || []
-    @genres = []
   end
 
-  BOOKS_FILE = './json/books.json'.freeze
-  LABELS_FILE = './json/labels.json'.freeze
-  GAMES_FILE = './json/games.json'.freeze
-  MUSIC_FILE = './json/music.json'.freeze
-
-  def load_music_album
-    return [] unless File.exist?(MUSIC_FILE)
-
-    File.open(MUSIC_FILE, 'r') do |file|
-      json_data = file.read
-      return [] if json_data.empty?
-
-      begin
-        # Ensure json_data is passed as a string to from_json
-        JSON.parse(json_data).map { |music_json| MusicAlbum.from_json(music_json.to_json) }
-      rescue JSON::ParserError
-        puts 'Error: Unable to parse JSON data in music.json. Creating a new empty list of music albums.'
-        []
-      end
-    end
-  end
-
-  def list_music_album(musics)
-    puts 'Music albums:'
-    if musics.empty?
-      puts 'No musics found.'
+  def list_books
+    if @books.empty?
+      puts 'No books found!'
     else
-      musics.each do |music|
-        puts "Title: #{music.name}"
-        puts "Published date: #{music.published_date}"
-        puts "Spotify: #{music.on_spotify}"
-        puts '---'
+      puts "\n--------------- Book Info ---------------"
+      @books.each do |book|
+        puts "Author: #{book.author}"
+        puts "Publisher: #{book.publisher}"
+        puts "Cover State: #{book.cover_state}"
+        puts "Publish Date: #{book.publish_date}"
+        puts '------------------------------------------'
       end
     end
   end
 
-  def add_music_album(musics)
-    puts 'Enter the title of the music album: '
-    title = gets.chomp
-    puts 'Enter the published date of the music album (YYYY-MM-DD): '
-    published_date = gets.chomp
-    puts 'Is the music album available on Spotify? (true/false): '
-    on_spotify = gets.chomp.downcase == 'true'
+  def list_labels
+    labels = @books.map(&:label).uniq
+    puts "\n--------------- Label Info ---------------"
 
-    music_album = MusicAlbum.new(Date.parse(published_date), false, on_spotify)
-    musics << music_album
-
-    genre_name = gets.chomp
-    genre = @genres.find { |g| g.name == genre_name } || add_genre(genre_name)
-    genre.add_item(music_album) # The error might be here if genre is nil
-
-    puts "Music album '#{title}' added."
-  end
-
-  def add_genre(name)
-    genre = Genre.new(name)
-    @genres << genre
-    genre
-  end
-
-  def list_genre
-    puts 'Genres:'
-    if @genres.empty?
-      puts 'No genres found.'
+    if labels.empty?
+      puts 'No labels found!'
     else
-      @genres.each do |genre|
-        puts "Genre Name: #{genre.name}"
-        puts 'Items:'
-        if genre.item.empty?
-          puts 'No items found.'
-        else
-          genre.item.each do |item|
-            puts "- #{item.name} (Published Date: #{item.published_date})"
-          end
-        end
-        puts '---'
+      labels.each do |label|
+        name = label.name
+        color = label.color
+        puts "Color: #{color} - Name: #{name}"
+        puts '------------------------------------------'
       end
     end
   end
 
-  def save_musics(musics)
-    File.write(MUSIC_FILE, JSON.pretty_generate(musics.map(&:to_json)))
-  end
-
-  def add_book(books)
-    print 'Enter the title of the book: '
-    title = gets.chomp
-    print 'Enter the author of the book: '
+  def add_book
+    print 'Enter the book author: '
     author = gets.chomp
-    print 'Enter the published date of the book (YYYY-MM-DD): '
-    published_date = gets.chomp
-    print 'Enter the cover state of the book: '
-    cover_state = gets.chomp
 
-    book = Book.new(title, Date.parse(published_date), author, cover_state)
-    books << book
-    puts "Book '#{book.name}' added."
+    print 'Enter the book publisher: '
+    publisher = gets.chomp
+
+    print 'Enter the publish date of the book (YYYY-MM-DD): '
+    publish_date = Date.parse(gets.chomp)
+
+    cover_state = ''
+    until %w[g b].include?(cover_state)
+      print 'Enter the cover state of the book: (G)ood or (B)ad?'
+      cover_state = gets.chomp.downcase
+    end
+
+    print 'Enter label name (e.g: buy, gift, found): '
+    name = gets.chomp.downcase
+
+    print 'Enter the book label color: '
+    color = gets.chomp.downcase
+
+    book = Book.new(author, publish_date, publisher, cover_state == 'g' ? 'good' : 'bad')
+    book.label = Label.new(1, name, color)
+    @books << book
+
+    puts '------------------------------------------', 'Book added successfully'
+    save_books
   end
 
   def load_books
-    return [] unless File.exist?(BOOKS_FILE)
+    return [] unless File.exist?(@file) && !File.empty?(@file)
 
-    File.open(BOOKS_FILE, 'r') do |file|
-      json_data = file.read
-      return [] if json_data.empty?
+    begin
+      json_data = File.read(@file)
+      books_data = JSON.parse(json_data, symbolize_names: true)
+      return [] unless books_data.is_a?(Array)
 
-      begin
-        JSON.parse(json_data).map { |book_json| Book.from_json(book_json) }
-      rescue JSON::ParserError
-        puts 'Error: Unable to parse JSON data in books.json. Creating a new empty list of books.'
-        []
+      books_data.map do |book|
+        label_data = book[:label]
+        label = label_data.nil? ? nil : Label.new(1, label_data[:name], label_data[:color])
+        Book.new(
+          book[:author],
+          book[:publish_date],
+          book[:publisher],
+          book[:cover_state],
+          label: label
+        )
       end
+    rescue Errno::ENOENT, JSON::ParserError => e
+      puts "An error occurred while trying to load books: #{e.message}"
+      []
     end
   end
 
-  def list_books(books)
-    puts 'Books:'
-    if books.empty?
-      puts 'No books found.'
-    else
-      books.each do |book|
-        puts "Title: #{book.name}"
-        puts "Author: #{book.author}"
-        puts "Published Date: #{book.published_date}"
-        puts "Cover State: #{book.cover_state}"
-        puts "Archived: #{book.archived}"
-        puts '---'
-      end
+  def save_books
+    books_json = @books.map do |book|
+      label_data = book.label.is_a?(Label) ? { name: book.label.name, color: book.label.color } : book.label
+      {
+        author: book.author,
+        publish_date: book.publish_date,
+        publisher: book.publisher,
+        cover_state: book.cover_state,
+        label: label_data
+      }
+    end
+  
+    begin
+      File.write(@file, books_json.to_json)
+    rescue Errno::ENOENT => e
+      puts "An error occurred while trying to save books: #{e.message}"
     end
   end
+  
 
-  def save_books(books)
-    File.write(BOOKS_FILE, JSON.pretty_generate(books.map(&:to_json)))
-  end
-
-  def load_labels
-    return [] unless File.exist?(LABELS_FILE)
-
-    File.open(LABELS_FILE, 'r') do |file|
-      json_data = file.read
-      return [] if json_data.empty?
-
-      begin
-        JSON.parse(json_data).map { |label_json| Label.from_json(label_json) }
-      rescue JSON::ParserError
-        puts 'Error: Unable to parse JSON data in labels.json. Creating a new empty list of labels.'
-        []
-      end
-    end
-  end
-
-  def list_labels(labels)
-    puts 'Labels:'
-    if labels.empty?
-      puts 'No labels found.'
-    else
-      labels.each do |label|
-        puts "Label: #{label.name}"
-        puts 'Items:'
-        if label.items.empty?
-          puts 'No items found.'
-        else
-          label.items.each do |item|
-            puts "- #{item.name}"
-          end
+  def getmusicalbum
+    file_path = './json/music.json'
+    if File.exist?(file_path)
+      file_content = File.read(file_path)
+      JSON.parse(file_content)
+      if File.empty?(file_path)
+        puts 'Empty album'
+      else
+        file_content = File.read(file_path)
+        music_data = JSON.parse(file_content)
+        music_data.each do |album|
+          puts "Published date: #{album['publish_date']} - archived: #{album['archived']}
+          - on spotify : #{album['on_spotify']}"
         end
-        puts '---'
       end
-    end
-  end
-
-  def save_labels(labels)
-    File.write(LABELS_FILE, JSON.pretty_generate(labels.map(&:to_json)))
-  end
-
-  def add_game(games)
-    print 'Enter the title of the game: '
-    title = gets.chomp
-    print 'Enter the published date of the game (YYYY-MM-DD): '
-    published_date = gets.chomp
-    print 'Enter the last played date of the game (YYYY-MM-DD): '
-    last_played_date = gets.chomp
-
-    game = Game.new(title, Date.parse(published_date), last_played_date)
-    games << game
-    puts "Game '#{game.name}' added."
-  end
-
-  def load_games
-    return [] unless File.exist?(GAMES_FILE)
-
-    File.open(GAMES_FILE, 'r') do |file|
-      json_data = file.read
-      return [] if json_data.empty?
-
-      begin
-        JSON.parse(json_data).map { |game_json| Game.from_json(game_json) }
-      rescue JSON::ParserError
-        puts 'Error: Unable to parse JSON data in games.json. Creating a new empty list of games.'
-        []
-      end
-    end
-  end
-
-  def list_games(games)
-    puts 'Games:'
-    if games.empty?
-      puts 'No games found.'
     else
-      games.each do |game|
-        puts "Title: #{game.name}"
-        puts "Published Date: #{game.published_date}"
-        puts "Last Played Date: #{game.last_played_at}"
-        puts "Archived: #{game.archived}"
-        puts '---'
-      end
+      puts 'No album available'
     end
   end
 
-  def save_games(games)
-    File.write(GAMES_FILE, JSON.pretty_generate(games.map(&:to_json)))
+  def getgenre
+    file_path = './json/music.json'
+    if File.exist?(file_path)
+      file_content = File.read(file_path)
+      JSON.parse(file_content)
+      if File.empty?(file_path)
+        puts 'Empty genre'
+      else
+        file_content = File.read(file_path)
+        music_data = JSON.parse(file_content)
+        music_data.each do |genre|
+          puts genre['genre']
+        end
+      end
+    else
+      puts 'No genre available'
+    end
   end
+
+  def filexists(music_data, file_path, music_hash)
+    if File.empty?(file_path)
+      File.write(file_path, JSON.generate(music_data))
+      file_content = File.read(file_path)
+      music_data_file = JSON.parse(file_content)
+      music_data_file << music_hash
+      File.write(file_path, JSON.generate(music_data))
+    else
+      file_content = File.read(file_path)
+      music_data_file = JSON.parse(file_content)
+      music_data_file << music_hash
+      File.write(file_path, JSON.generate(music_data_file))
+    end
+  end
+
+  def filenotexists(music_data, file_path, music_hash)
+    File.write(file_path, JSON.generate(music_data))
+    file_content = File.read(file_path)
+    music_data = JSON.parse(file_content)
+    music_data << music_hash
+    puts music_data
+    File.write(file_path, JSON.generate(music_data))
+  end
+
+  def inputmusic
+    puts 'Enter Genre name'
+    genre = gets.chomp
+    puts 'Enter the publish date of the music album'
+    publish_date = gets.chomp
+    puts 'Is the music album archived? (true/false)'
+    archived = gets.chomp
+    puts 'Is the music album on spotify? (true/false)'
+    on_spotify = gets.chomp
+    [genre, publish_date, archived, on_spotify]
+  end
+
+  def addmusicalbum
+    file_path = './json/music.json'
+    genre, publish_date, archived, on_spotify = inputmusic
+    music_hash = {
+      genre: genre,
+      publish_date: publish_date,
+      archived: archived,
+      on_spotify: on_spotify
+    }
+    music_data = []
+    if File.exist?(file_path)
+      filexists(music_data, file_path, music_hash)
+    else
+      filenotexists(music_data, file_path, music_hash)
+    end
+  end
+
 end

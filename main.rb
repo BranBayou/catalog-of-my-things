@@ -24,30 +24,26 @@ loop do
   option = gets.chomp.to_i
   case option
   when 1
-    app.list_books(app.books)
+    app.list_books
   when 2
-    app.list_music_album(app.musics)
+    app.getmusicalbum
   when 3
-    app.list_games(app.games)
+    app.list_games
   when 4
-    app.list_genre
+    app.getgenre
   when 5
-    app.list_labels(app.labels)
+    app.list_labels
   when 6
     list_all_authors
   when 7
     list_all_sources
   when 8
-    app.add_book(app.books)
+    app.add_book
   when 9
-    app.add_music_album(app.musics)
+    app.addmusicalbum
   when 10
-    app.add_game(app.games)
+    app.add_game
   when 11
-    app.save_books(app.books)
-    app.save_labels(app.labels)
-    app.save_games(app.games)
-    app.save_musics(app.musics)
     puts 'Thank you for using this app...'
     break
   else
