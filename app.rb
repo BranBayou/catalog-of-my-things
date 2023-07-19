@@ -1,5 +1,6 @@
 require 'json'
 require 'date'
+require 'terminal-table'
 require_relative 'item'
 require_relative 'book'
 require_relative 'game'
@@ -7,7 +8,6 @@ require_relative 'music'
 require_relative 'genre'
 require_relative 'label'
 require_relative 'author'
-
 
 class App
   FILE_PATH = "#{__dir__}/json/books.json".freeze
@@ -27,30 +27,37 @@ class App
     if @books.empty?
       puts 'No books found!'
     else
-      puts "\n--------------- Book Info ---------------"
-      @books.each do |book|
-        puts "Author: #{book.author}"
-        puts "Publisher: #{book.publisher}"
-        puts "Cover State: #{book.cover_state}"
-        puts "Publish Date: #{book.publish_date}"
-        puts '------------------------------------------'
+      rows = @books.map do |book|
+        [book.author, book.publisher, book.cover_state, book.publish_date]
       end
+
+      table = Terminal::Table.new do |t|
+        t.title = 'Book Info'
+        t.headings = ['Author', 'Publisher', 'Cover State', 'Publish Date']
+        t.rows = rows
+      end
+
+      puts table
     end
   end
 
   def list_labels
-    labels = @books.map(&:label).uniq
-    puts "\n--------------- Label Info ---------------"
+    labels = @books.map(&:label).uniq.compact
 
     if labels.empty?
       puts 'No labels found!'
     else
-      labels.each do |label|
-        name = label.name
-        color = label.color
-        puts "Color: #{color} - Name: #{name}"
-        puts '------------------------------------------'
+      rows = labels.map do |label|
+        [label.color, label.name]
       end
+
+      table = Terminal::Table.new do |t|
+        t.title = 'Label Info'
+        t.headings = %w[Color Name]
+        t.rows = rows
+      end
+
+      puts table
     end
   end
 
@@ -70,7 +77,7 @@ class App
       cover_state = gets.chomp.downcase
     end
 
-    print 'Enter label name (e.g: buy, gift, found): '
+    print 'Enter label name (e.g: fiction, nonfiction, science): '
     name = gets.chomp.downcase
 
     print 'Enter the book label color: '
@@ -120,48 +127,59 @@ class App
         label: label_data
       }
     end
-  
+
     begin
       File.write(@file, books_json.to_json)
     rescue Errno::ENOENT => e
       puts "An error occurred while trying to save books: #{e.message}"
     end
   end
-  
 
   def list_music_album
     file_path = './json/music.json'
     if File.exist?(file_path)
       file_content = File.read(file_path)
-      JSON.parse(file_content)
-      if File.empty?(file_path)
+      music_data = JSON.parse(file_content)
+
+      if music_data.empty?
         puts 'Empty album'
       else
-        file_content = File.read(file_path)
-        music_data = JSON.parse(file_content)
-        music_data.each do |album|
-          puts "Published date: #{album['publish_date']} - archived: #{album['archived']}
-          - on spotify : #{album['on_spotify']}"
+        rows = music_data.map do |album|
+          [album['publish_date'], album['archived'], album['on_spotify']]
         end
+
+        table = Terminal::Table.new do |t|
+          t.title = 'Music Album Info'
+          t.headings = ['Published Date', 'Archived', 'On Spotify']
+          t.rows = rows
+        end
+
+        puts table
       end
     else
       puts 'No album available'
     end
   end
 
-  def list_genre
+  def list_genres
     file_path = './json/music.json'
     if File.exist?(file_path)
       file_content = File.read(file_path)
-      JSON.parse(file_content)
-      if File.empty?(file_path)
+      music_data = JSON.parse(file_content)
+
+      if music_data.empty?
         puts 'Empty genre'
       else
-        file_content = File.read(file_path)
-        music_data = JSON.parse(file_content)
-        music_data.each do |genre|
-          puts genre['genre']
+        genres = music_data.map { |album| album['genre'] }.uniq.compact
+
+        rows = genres.map { |genre| [genre] }
+
+        table = Terminal::Table.new do |t|
+          t.title = 'Genres'
+          t.rows = rows
         end
+
+        puts table
       end
     else
       puts 'Empty genre'
@@ -260,26 +278,38 @@ class App
   end
 
   def list_games
-    puts 'There are no games in the library' if @games.empty?
-    load_games
-    @games.each do |game|
-      puts game.label.nil? ? 'Label: No label' : "Label: #{game.label.title}"
-      puts "Publish date: #{game.publish_date}"
-      puts game.multiplayer == true ? 'Player: multiplayer' : 'Player: singleplayer'
-      puts "Last played at: #{game.last_played_at}"
-      puts game.author.nil? ? 'Author: No author' : "Author: #{game.author.first_name} #{game.author.last_name}"
-      puts game.genre.nil? ? 'Genre: No genre' : "Genre: #{game.genre.name}"
-      puts '============================'
+    if @games.empty?
+      puts 'Empty games!'
+    else
+      rows = @games.map do |game|
+        [game.label&.title || 'No label', game.publish_date, game.multiplayer ? 'Multiplayer' : 'Singleplayer', game.last_played_at]
+      end
+
+      table = Terminal::Table.new do |t|
+        t.title = 'Game Info'
+        t.headings = ['Label', 'Publish Date', 'Player Mode', 'Last Played At']
+        t.rows = rows
+      end
+
+      puts table
     end
-    puts
   end
 
   def list_authors
-    load_authors
-    puts 'There are no authors in the library' if @authors.empty?
-    @authors.each.with_index do |author, index|
-      puts "Author #{index + 1}: #{author.first_name} #{author.last_name}"
-      puts '============================'
+    if authors.empty?
+      puts 'Authors not found!'
+    else
+      rows = authors.map.with_index(1) do |author, index|
+        [index, "#{author.first_name} #{author.last_name}", author.items.size]
+      end
+
+      table = Terminal::Table.new do |t|
+        t.title = 'Author Info'
+        t.headings = ['#', 'Author Name', 'Number of Items']
+        t.rows = rows
+      end
+
+      puts table
     end
   end
 
@@ -355,5 +385,4 @@ class App
     end
     @authors
   end
-
 end
