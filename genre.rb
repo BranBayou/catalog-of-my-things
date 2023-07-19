@@ -7,11 +7,11 @@ class Genre
   def initialize(name)
     @id = Random.rand(1000..9999)
     @name = name
-    @item = []
+    @item = [] # Initialize @item as an empty array
   end
 
-  def add_item
-    @item << item
+  def add_item(item)
+    @item << item # Fix the method to use @item instead of @items
     item.genre = self
   end
 end

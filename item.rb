@@ -11,7 +11,7 @@ class Item
 
   def can_be_archived?
     today = Date.today
-    published_date < (today - (10 * 365)) # Checking if the published_date is older than 10 years
+    published_date < (today - (10 * 365))
   end
 
   def move_to_archive
