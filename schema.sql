@@ -4,8 +4,8 @@ CREATE DATABASE catalogs-of-my-things
 --books schema
 CREATE TABLE books (
     id INT GENERATED ALWAYS AS IDENTITY,
-    publisher VARCHAR(50),
-    cover_state VARCHAR(50),
+    publisher VARCHAR(25),
+    cover_state VARCHAR(25),
     publish_date DATE,
     archived BOOLEAN,
     label_id INT,
@@ -20,8 +20,8 @@ CREATE TABLE books (
 --label schema
 CREATE TABLE labels (
     id INT GENERATED ALWAYS AS IDENTITY,
-    title VARCHAR(50),
-    color VARCHAR(50),
+    title VARCHAR(25),
+    color VARCHAR(25),
     PRIMARY KEY (id)
 );
 
@@ -45,8 +45,8 @@ CREATE TABLE Game (
 -- Author Table
 CREATE TABLE Author (
     id SERIAL PRIMARY KEY,
-    first_name VARCHAR(100),
-    last_name VARCHAR(100)
+    first_name VARCHAR(25),
+    last_name VARCHAR(25)
 )
 
 -- Table: music_albums
@@ -64,6 +64,6 @@ CREATE TABLE music_albums (
 -- Table: genres
 CREATE TABLE genres (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL
+  name VARCHAR(25) NOT NULL
 );
 
