@@ -29,8 +29,7 @@
 
 **[Catalog of my things]** "Catalog of my things" is a simple console app that allows users to manage collections of the things they own. It has been developed based on the following UML class diagram.
 
-### Video presentation
-    (https://drive.google.com/file/d/1l9gVw0djCoo-PJS55vtxsyNlixtV4C3y/view?usp=drive_link)
+[Video presentation](https://drive.google.com/file/d/1l9gVw0djCoo-PJS55vtxsyNlixtV4C3y/view?usp=drive_link)
 
 ![Class diagram image](https://github.com/BranBayou/catalog-of-my-things/blob/set-up-kanban-board/Assets/catalog_of_my_things.png)
 
