@@ -282,12 +282,12 @@ class App
       puts 'Empty games!'
     else
       rows = @games.map do |game|
-        [game.label&.title || 'No label', game.publish_date, game.multiplayer ? 'Multiplayer' : 'Singleplayer', game.last_played_at]
+        [game.label&.title || game.publish_date, game.multiplayer ? 'Multiplayer' : 'Singleplayer', game.last_played_at]
       end
 
       table = Terminal::Table.new do |t|
         t.title = 'Game Info'
-        t.headings = ['Label', 'Publish Date', 'Player Mode', 'Last Played At']
+        t.headings = ['Publish Date', 'Player Mode', 'Last Played At']
         t.rows = rows
       end
 
