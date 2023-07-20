@@ -35,7 +35,6 @@ RSpec.describe Game do
     context 'when the game is archived' do
       let(:archived) { true }
       let(:last_played_at) { Date.today - 3.years }
-
     end
   end
 end
