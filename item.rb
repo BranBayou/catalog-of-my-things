@@ -1,40 +1,26 @@
-require 'json'
+require_relative 'label'
+require 'date'
 
 class Item
-  attr_accessor :name, :published_date, :archived
+  attr_accessor :genre, :author, :label, :publish_date
+  attr_reader :id, :archived
 
-  def initialize(name, published_date)
-    @name = name
-    @published_date = published_date
-    @archived = false
-  end
-
-  def can_be_archived?
-    today = Date.today
-    published_date < (today - (10 * 365))
+  def initialize(publish_date, archived, id = Random.rand(1000...9999))
+    @id = id
+    @publish_date = publish_date
+    @archived = archived
+    @label = nil
+    @genre = nil
+    @author = nil
   end
 
   def move_to_archive
-    if can_be_archived?
-      @archived = true
-      puts "#{name} has been archived."
-    else
-      puts "#{name} cannot be archived."
-    end
+    @archived = true if can_be_archived?
   end
 
-  def to_json(*_args)
-    {
-      name: name,
-      published_date: published_date.to_s,
-      archived: archived
-    }.to_json
-  end
+  private
 
-  def self.from_json(json)
-    data = JSON.parse(json)
-    new(data['name'], Date.parse(data['published_date'])).tap do |item|
-      item.archived = data['archived']
-    end
+  def can_be_archived?
+    Date.today.year - @publish_date.year > 10
   end
 end

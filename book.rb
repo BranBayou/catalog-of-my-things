@@ -1,37 +1,19 @@
 require_relative 'item'
+require 'date'
 
 class Book < Item
-  attr_accessor :author, :cover_state
+  attr_reader :author
+  attr_accessor :publisher, :cover_state, :label
 
-  def initialize(name, published_date, author, cover_state)
-    super(name, published_date)
+  def initialize(author, publish_date, publisher, cover_state, label: nil)
+    super(publish_date, false)
     @author = author
+    @publisher = publisher
     @cover_state = cover_state
+    @label = label
   end
 
   def can_be_archived?
-    super || cover_state == 'bad'
-  end
-
-  def to_json(*_args)
-    {
-      name: name,
-      published_date: published_date.to_s,
-      author: author,
-      cover_state: cover_state,
-      archived: archived
-    }.to_json
-  end
-
-  def self.from_json(json)
-    data = JSON.parse(json)
-    new(
-      data['name'],
-      Date.parse(data['published_date']),
-      data['author'],
-      data['cover_state']
-    ).tap do |book|
-      book.archived = data['archived']
-    end
+    super || @cover_state.downcase == 'bad'
   end
 end

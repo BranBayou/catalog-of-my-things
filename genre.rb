@@ -2,16 +2,16 @@ require_relative 'item'
 
 class Genre
   attr_reader :id
-  attr_accessor :name, :item
+  attr_accessor :name, :items
 
   def initialize(name)
     @id = Random.rand(1000..9999)
     @name = name
-    @item = [] # Initialize @item as an empty array
+    @items = []
   end
 
   def add_item(item)
-    @item << item # Fix the method to use @item instead of @items
+    @items << item
     item.genre = self
   end
 end

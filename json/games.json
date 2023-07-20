@@ -1,3 +1,10 @@
 [
-  "{\"name\":\"NFS\",\"published_date\":\"2020-02-02\",\"last_played_at\":\"2023/02/02\",\"archived\":false}"
+  {
+    "id": 2679,
+    "publish_date": "2020-02-02",
+    "multiplayer": false,
+    "last_played_at": "2023-07-19",
+    "label": null,
+    "author": "Microverse inc"
+  }
 ]
